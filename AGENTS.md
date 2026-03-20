@@ -21,6 +21,22 @@ Run a section with:
 cargo run --bin section_name
 ```
 
+## Creating a New Chapter
+
+When starting a new chapter, use `--vcs none` to prevent Cargo from creating a nested `.git` folder:
+
+```bash
+cargo init chapter_N --vcs none
+```
+
+Then create the `src/bin/` directory for section files:
+
+```bash
+mkdir chapter_N/src/bin
+```
+
+**Reminder:** Always use `--vcs none` — the root repo already tracks everything.
+
 ## Teaching Style
 
 - The user provides the Rust book URL for each lesson, and the assistant fetches that URL, reviews it, and bases the teaching plan on it.
@@ -203,7 +219,7 @@ Not allowed:
     - covered: multi-file example layout using `src/lib.rs`, `src/front_of_house.rs`, and `src/front_of_house/hosting.rs`
     - note: section documented as conceptual walkthrough due to `src/bin/*.rs` lesson workflow
 
-- **Chapter 8** — Common Collections (in progress)
+- **Chapter 8** — Common Collections (complete)
   - 8.1 Storing Lists of Values with Vectors → `chapter_8/src/bin/vectors.rs` (complete)
     - covered: `Vec<T>` purpose and memory model (stack metadata + contiguous heap elements)
     - covered: creating vectors with `Vec::new()` vs `vec![]` and type inference behavior
@@ -217,7 +233,7 @@ Not allowed:
     - covered: storing mixed logical data via enum variants in `Vec<EnumType>`
     - covered: drop semantics for vectors and contained elements when scope ends
     - covered: purpose-first probes, perturb tests, and concise rule recaps added as comments in-file
-  - 8.2 Storing UTF-8 Encoded Text with Strings → `chapter_8/src/bin/strings.rs` (in progress)
+  - 8.2 Storing UTF-8 Encoded Text with Strings → `chapter_8/src/bin/strings.rs` (complete)
     - covered: `String` vs `&str` ownership model and memory placement
     - covered: string literals as `&'static str` (stored in binary)
     - covered: idiomatic function parameter choice (`&str`) and `&String` -> `&str` coercion note
@@ -225,5 +241,29 @@ Not allowed:
     - covered: `String::len()` counts bytes; `.chars().count()` counts Unicode scalar values
     - covered: update operations with `push_str(&str)` and `push(char)`
     - covered: ownership behavior of `push_str` (borrows input, source remains usable)
+    - covered: concatenation with `+` ownership behavior (`s1` moved, `s2` borrowed) and moved-value boundary (`E0382`)
+    - covered: concatenation with `format!` returning `String` while keeping inputs usable
+    - covered: why integer indexing on `String` is disallowed (`E0277`) and UTF-8 ambiguity/performance rationale
+    - covered: string slicing with byte ranges, valid char-boundary slicing, and invalid-boundary runtime panic
+    - covered: boundary-check tooling with `char_indices`, `is_char_boundary`, and safe char-first processing (`chars`, `take`, `collect`)
+    - covered: byte iteration with `.bytes()` and byte-slice access with `.as_bytes()`
+    - covered: grapheme-cluster note and why it requires external crates (`unicode-segmentation`)
+    - covered: recap quiz completed; Q&A saved in comments at bottom of `strings.rs`
     - covered: lesson notes captured as comments in `strings.rs`
-  - next: continue 8.2 concepts 4-9 (concatenation `+`/`format!`, indexing rules, slicing, chars/bytes iteration, UTF-8 views)
+  - 8.3 Storing Keys with Associated Values in Hash Maps → `chapter_8/src/bin/hashmaps.rs` (complete)
+    - covered: `HashMap<K, V>` purpose and key-based lookup mental model vs index-based vectors
+    - covered: creating maps with `HashMap::new()` + `insert`, explicit `use std::collections::HashMap`
+    - covered: mutability requirement for `insert` and boundary note (`E0596`)
+    - covered: arbitrary print/iteration order (not insertion order)
+    - covered: homogeneity and type inference lock-in from first insert (`HashMap<String, i32>`)
+    - covered: type-mismatch boundary probe for wrong key/value types (`E0308`)
+    - covered: access with `get(&key)` returning `Option<&V>`
+    - covered: defaulting pattern for `Copy` values (`copied().unwrap_or(default)`)
+    - covered: missing-key behavior (`None` -> fallback via `unwrap_or`)
+    - covered: iteration with `for (k, v) in &map` and borrow-vs-move distinction in loops
+    - covered: `insert` ownership behavior (owned types move, `Copy` types copy)
+    - covered: overwrite behavior of `insert` for existing keys (`Some(old_value)` return, len unchanged)
+    - covered: conditional insert with `entry(key).or_insert(default)`
+    - covered: in-place mutation through returned mutable reference (`&mut V`, e.g. `*value += 1`)
+    - covered: update-from-old-value pattern with word counting (`split_whitespace` + `entry`)
+    - covered: recap quiz skipped by user

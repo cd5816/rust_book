@@ -256,4 +256,66 @@ fn main() {
     // If you need the first three characters as a String
     let first_three: String = hello2.chars().take(3).collect();
     println!("First three chars = {}", first_three);
+
+    // ------------------------------------------------------------
+    // Concept 8: Iterating with .bytes() vs .as_bytes()
+    // ------------------------------------------------------------
+    // Both give you raw UTF-8 bytes, but differ in what they return:
+    //
+    // .bytes()    -> returns an Iterator over u8 values (lazy, one at a time)
+    // .as_bytes() -> returns a slice &[u8] (whole array upfront)
+    //
+    // Tool choice:
+    // - Use .bytes() when iterating in a for loop or chaining iterator methods.
+    // - Use .as_bytes() when you need random access by index or need to pass
+    //   the whole byte slice to a function expecting &[u8].
+
+    // .bytes() - iterator, lazy, one at a time
+    println!("bytes of 'Зд'");
+    for b in "Зд".bytes() {
+        println!("  {}", b); // 208, 151, 208, 180
+    }
+
+    // .as_bytes() - whole slice upfront, supports random access
+    let bytes = "Зд".as_bytes();
+    println!("{:?}", bytes); // [208, 151, 208, 180]
+    println!("{}", bytes[0]); // 208 - random access
+
+    // Grapheme-cluster note:
+    // - `.chars()` gives Unicode scalar values, not always what humans perceive as one letter.
+    // - Example: "नमस्ते" has 6 chars but 4 grapheme clusters.
+    // - For grapheme-cluster iteration, use the `unicode-segmentation` crate.
 }
+
+// ============================================================
+// RECAP QUIZ (CHAPTER 8.2) - QUESTIONS AND ANSWERS
+// ============================================================
+// Q1) What's the difference between String and &str in ownership/location?
+// A1) String owns its UTF-8 bytes (typically on the heap). &str is a borrowed
+//     view into UTF-8 bytes owned elsewhere.
+//     Note: &str is not always in the binary; string literals are &'static str
+//     and do live in the binary.
+//
+// Q2) What type is a string literal like "hello"?
+// A2) &'static str
+//
+// Q3) Why does push_str take &str instead of String?
+// A3) push_str borrows input text, so callers keep ownership and can still use
+//     the original value afterward. This avoids unnecessary moves/copies.
+//
+// Q4) After `let s3 = s1 + &s2;`, which variable(s) are still usable?
+// A4) s1 is moved and no longer usable. s2 is still usable (borrowed).
+//
+// Q5) Why doesn't Rust allow s[0] on String?
+// A5) String is UTF-8 bytes; integer indexing is ambiguous and unsafe for
+//     multi-byte chars. Rust requires explicit APIs (.chars(), .bytes(), slices).
+//
+// Q6) Difference between .len() and .chars().count() for "Здравствуйте"?
+// A6) .len() == 24 bytes. .chars().count() == 12 Unicode scalar values.
+//
+// Q7) What happens with &s[0..1] if the first character takes 2 bytes?
+// A7) Runtime panic: index is not at a char boundary.
+//
+// Q8) Name two safe ways to iterate over characters.
+// A8) Use .chars() and .char_indices().
+//     (Spelling note: it's char_indices, not char_indicies.)
