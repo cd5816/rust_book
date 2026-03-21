@@ -267,3 +267,24 @@ Not allowed:
     - covered: in-place mutation through returned mutable reference (`&mut V`, e.g. `*value += 1`)
     - covered: update-from-old-value pattern with word counting (`split_whitespace` + `entry`)
     - covered: recap quiz skipped by user
+
+- **Chapter 9** — Error Handling (in progress)
+  - 9.1 Unrecoverable Errors with `panic!` → `chapter_9/src/bin/panic.rs` (complete)
+    - covered: direct panic with `panic!("crash and burn")` and source location reporting (`file:line:column`)
+    - covered: out-of-bounds vector indexing panic (`v[99]`) and why Rust stops execution for safety
+    - covered: reading panic output and tracing to user code location
+    - covered: backtrace workflow with `RUST_BACKTRACE=1` and first-user-frame debugging rule
+    - covered: unwind vs abort behavior and release-profile setting (`[profile.release] panic = 'abort'`)
+  - 9.2 Recoverable Errors with `Result` → `chapter_9/src/bin/result.rs` (complete)
+    - covered: purpose of `Result<T, E>` and matching on `Ok`/`Err`
+    - covered: branching on `io::ErrorKind` (`NotFound`) and create-if-missing recovery path
+    - covered: concise propagation with `?` and equivalent manual `match` mental model
+    - covered: boundary probe E0277 (`?` in `main` returning `()`), then fix via `fn main() -> Result<(), Box<dyn Error>>`
+    - covered: `?` with `Option` via `last_char_of_first_line` one-liner and expanded equivalent
+    - covered: runtime path note for file APIs (relative paths resolve from current working directory)
+  - 9.3 To `panic!` or Not to `panic!` → `chapter_9/src/bin/panic_or_not.rs` (in progress)
+    - covered: decision framing (`panic!` for broken invariants/bugs, `Result` for expected failures)
+    - covered: when `expect` is reasonable if human guarantees exceed compiler knowledge
+    - covered: hardcoded IP parse with `expect` (`"127.0.0.1"`) and successful run
+    - covered: boundary probe with invalid hardcoded IP (`"127.0.0.999"`) producing panic with context
+    - next: guidelines for panic vs `Result` in app/library code and `Guess` validation type pattern
